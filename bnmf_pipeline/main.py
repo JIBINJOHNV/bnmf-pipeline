@@ -40,7 +40,7 @@ def run_full_pipeline(configs):
     # 2. Step 1: Trait Preparation (Polars)
     print(f"--- [PYTHON] Starting Trait Processing in {final_output_path} ---")
     # Logic from your 1_custome_nbmnf_clustering.py
-    from .custome_nbmnf_clustering import process_traits_gwas_polars
+    from  .process_traits_sumstat  import process_traits_gwas_polars
     trait_outpit=process_traits_gwas_polars(
         main_gwas_id=main_id,
         main_gwas_loci=main_gwas_loci,
