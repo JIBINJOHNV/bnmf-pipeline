@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bnmf-pipeline"  # The name used for 'pip install'
+version = "0.1.0"
+description = "Genomic bNMF clustering pipeline"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "polars",
+    "rpy2",
+    "pandas",
+    "pyyaml",
+    "rich",
+    "rich-argparse"
+]
+
+[project.scripts]
+# This defines the command you type in the terminal
+bnmf-pipeline = "bnmf_pipeline.cli:main"
+
+[tool.setuptools]
+# Points to the new folder name (with underscore)
+packages = ["bnmf_pipeline"]
+
+[tool.setuptools.package-data]
+# Tells Python to include your R folder inside the new package name
+bnmf_pipeline = ["R/*.r", "R/*.R", "R/*.Rmd", "R/*.rmd"]
+
+[tool.setuptools.exclude-package-data]
+bnmf_pipeline = ["archived/*"]

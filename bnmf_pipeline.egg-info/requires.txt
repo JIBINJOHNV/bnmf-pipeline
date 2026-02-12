@@ -1,0 +1,6 @@
+polars
+rpy2
+pandas
+pyyaml
+rich
+rich-argparse

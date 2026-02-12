@@ -1,0 +1,113 @@
+export CONDA_SUBDIR=osx-64
+
+mamba create -n bnmf \
+  -c conda-forge \
+  -c bioconda \
+  -c genomedk \
+  -c defaults \
+  --strict-channel-priority \
+  python=3.10 \
+  r-base=4.3 \
+  r-tidyverse \
+  r-data.table \
+  r-readxl \
+  r-magrittr \
+  r-dplyr \
+  r-strex \
+  r-dt \
+  r-kableextra \
+  r-rmarkdown \
+  r-knitr \
+  r-htmltools \
+  r-ggplot2 \
+  r-ggrepel \
+  r-tidyr \
+  r-rstudioapi \
+  r-scales \
+  r-openxlsx \
+  r-furrr \
+  r-progressr \
+  r-vroom \
+  r-pacman \
+  r-optparse \
+  r-devtools \
+  polars \
+  pandas \
+  packaging \
+  pyarrow \
+  pytabix \
+  psutil \
+  rich-argparse \
+  rpy2 \
+  r-genomicsem \
+  bioconductor-genomicranges \
+  bioconductor-iranges \
+  bioconductor-rtracklayer \
+  bioconductor-complexheatmap \
+  bioconductor-homo.sapiens
+
+
+
+
+install_github("aj-grant/navmix", build_vignettes = TRUE)
+  genomedk::r-genomicsem \
+
+
+
+name: bnmf
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Core Python
+  - python=3.11
+  - polars
+  - pandas
+  - pyarrow
+  - psutil
+  - packaging
+  
+  # Python-Bioinformatics
+  - pytabix
+  
+  # R Core and Tidyverse
+  - r-base=4.3  # Pinning R for stability
+  - r-tidyverse
+  - r-data.table
+  - r-readxl
+  - r-magrittr
+  - r-dplyr
+  - r-tidyr
+  - r-ggplot2
+  - r-ggrepel
+  - r-scales
+  
+  # R Utilities & Reporting
+  - r-devtools
+  - r-rmarkdown
+  - r-knitr
+  - r-kableextra
+  - r-dt
+  - r-htmltools
+  - r-rstudioapi
+  - r-openxlsx
+  - r-vroom
+  - r-pacman
+  - r-here
+  # R Performance & Logic
+  - r-furrr
+  - r-progressr
+  - r-strex
+
+  
+  # Bioconductor & Bioconda
+  - bioconductor-genomicranges
+  - bioconductor-iranges
+  - bioconductor-rtracklayer
+  - bioconductor-complexheatmap
+  - bioconductor-homo.sapiens
+  - r-genomicsem  # Moved to r- prefix for conda-forge/bioconda compatibility
+
+
+# CONDA_SUBDIR=osx-64 mamba env create -f bnmf_env.yaml
