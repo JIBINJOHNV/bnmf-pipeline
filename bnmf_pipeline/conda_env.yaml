@@ -39,7 +39,7 @@ mamba create -n bnmf \
   psutil \
   rich-argparse \
   rpy2 \
-  r-genomicsem \
+  genomedk::r-genomicsem \
   bioconductor-genomicranges \
   bioconductor-iranges \
   bioconductor-rtracklayer \

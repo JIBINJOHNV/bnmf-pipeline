@@ -84,6 +84,14 @@ def main():
                              metavar="", help="Convergence tolerance for bNMF. (Default: %(default)s)")
     bnmf_group.add_argument("--corr_cutoff", type=float, default=0.8, 
                              metavar="", help="Correlation cutoff for redundant traits. (Default: %(default)s)")
+    bnmf_group.add_argument( "--maximum_k", type=int, default=30, metavar="",
+        help=(
+            "Maximum number of latent factors (K) allowed in the Bayesian NMF model. "
+            "This serves as an upper bound; the algorithm will automatically prune "
+            "unused components via shrinkage (ARD). "
+            "(Default: %(default)s)"
+        )
+    )
 
     # Show help and exit if no arguments provided
     if len(sys.argv) == 1:

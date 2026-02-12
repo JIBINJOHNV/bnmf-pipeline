@@ -87,6 +87,7 @@ def run_full_pipeline(configs):
         n_reps           = configs['n_reps'],
         tolerance        = configs['tolerance'],
         corr_cutoff      = configs['corr_cutoff'],
+        maximum_k        = configs['maximum_k'],
         script_path      = str(INTERNAL_R_DIR)
     )
     print(f"Success! Results saved in: {final_output_path}")

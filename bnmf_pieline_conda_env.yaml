@@ -44,5 +44,5 @@ dependencies:
   - bioconductor-complexheatmap
   - bioconductor-homo.sapiens
   - pip
-    - pip:
-      - -e .  # This links the bnmf-pipeline command automatically
+  - pip:
+    - -e .

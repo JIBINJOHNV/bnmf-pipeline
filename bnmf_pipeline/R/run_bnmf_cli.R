@@ -19,7 +19,15 @@ option_list <- list(
   make_option(c("-c", "--corr_cutoff"), type="double", default=0.8, 
               help="Correlation cutoff for redundant traits [default %default]", metavar="num"),
   make_option(c("-p", "--script_path"), type="character", default=NULL, 
-              help="Path to the core bNMF R source scripts", metavar="path")
+              help="Path to the core bNMF R source scripts", metavar="path"),
+  make_option( c("-k", "--maximum_k"), type = "integer", default = 30,
+            help = paste(
+              "Maximum number of latent factors (K) allowed in the Bayesian NMF model.",
+              "This serves as an upper bound; the model will automatically prune",
+              "unused components via shrinkage (ARD).",
+              "Default: %default."
+            )
+          )
 )
 
 opt_parser <- OptionParser(
@@ -60,7 +68,8 @@ run_genomic_bnmf_pipeline(
     n_reps           = opt$n_reps, 
     tolerance        = opt$tolerance,
     corr_cutoff      = opt$corr_cutoff,
-    script_path      = opt$script_path
+    script_path      = opt$script_path,
+    maximum_k        = opt$maximum_k,
 )
 
 message(">>> bNMF pipeline completed successfully.")

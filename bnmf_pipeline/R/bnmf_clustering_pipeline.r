@@ -14,7 +14,8 @@ run_genomic_bnmf_pipeline <- function(
     n_reps = 100, 
     tolerance = 1e-6,
     corr_cutoff = 0.8,
-    script_path = NULL
+    script_path = NULL,
+    maximum_k=30
 ) {
   start_time <- Sys.time()
   
@@ -84,7 +85,8 @@ run_genomic_bnmf_pipeline <- function(
 
   # 7. Execute bNMF
   message(sprintf("--- Running %i bNMF Iterations ---", n_reps))
-  bnmf_reps <- run_bNMF(final_zscore_matrix, n_reps = n_reps, tolerance = tolerance)
+  bnmf_reps <- run_bNMF(final_zscore_matrix, n_reps = n_reps, 
+                        tolerance = tolerance, K=maximum_k)
   
   # 8. Stability Analysis & Results Saving
   summarize_bNMF(bnmf_reps, dir_save = project_dir)

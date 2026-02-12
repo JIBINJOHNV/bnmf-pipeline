@@ -1,6 +1,6 @@
 # BNMF Genomic Clustering Pipeline
 
-A production-grade Python/R hybrid pipeline for processing GWAS summary statistics and performing Bayesian Non-negative Matrix Factorization (bNMF) clustering.
+A Python/R hybrid pipeline for processing GWAS summary statistics generated from postgwas harmonisation and performing Bayesian Non-negative Matrix Factorization (bNMF) clustering.
 
 Implements the partitioning methodology described in:  
 https://github.com/gwas-partitioning/bnmf-clustering
@@ -93,5 +93,5 @@ The pipeline produces:
 ## Option 1 — Conda Environment (Recommended)
 
 ```bash
-conda env create -f bnmf_pkg/conda_env.yaml
-conda activate bnmf_pkg_env
+conda env create -f bnmf_pipeline/bnmf_pieline_conda_env.yaml
+conda activate bnmf
