@@ -1,0 +1,48 @@
+name: bnmf
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - r-base=4.3
+  - r-tidyverse
+  - r-data.table
+  - r-readxl
+  - r-magrittr
+  - r-dplyr
+  - r-strex
+  - r-dt
+  - r-kableextra
+  - r-rmarkdown
+  - r-knitr
+  - r-htmltools
+  - r-ggplot2
+  - r-ggrepel
+  - r-tidyr
+  - r-rstudioapi
+  - r-scales
+  - r-openxlsx
+  - r-furrr
+  - r-progressr
+  - r-vroom
+  - r-pacman
+  - r-optparse
+  - r-devtools
+  - polars
+  - pandas
+  - packaging
+  - pyarrow
+  - pytabix
+  - psutil
+  - rich-argparse
+  - rpy2
+  - r-genomicsem
+  - bioconductor-genomicranges
+  - bioconductor-iranges
+  - bioconductor-rtracklayer
+  - bioconductor-complexheatmap
+  - bioconductor-homo.sapiens
+  - pip
+    - pip:
+      - -e .  # This links the bnmf-pipeline command automatically

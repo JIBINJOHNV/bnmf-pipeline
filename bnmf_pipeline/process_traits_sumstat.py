@@ -274,7 +274,9 @@ def process_traits_gwas_polars(
     output_folder,
     r2_threshold=0.8, 
     window=1_000_000, 
-    bcftools_bin="bcftools"
+    bcftools_bin="bcftools",
+    variant_missing_rate=0.1,
+    sample_missing_rate=0.1
 ):
     # ---------------------------------------------------------
     # 1. Resource Allocation & Setup
@@ -352,8 +354,8 @@ def process_traits_gwas_polars(
     z_full_filt, ss_full_filt, rem_vars, rem_traits = filter_by_missingness_polars(
         z_df=z_full_df,
         ss_df=ss_full_df,
-        variant_missing_cutoff=0.1,
-        sample_missing_cutoff=0.1
+        variant_missing_cutoff=variant_missing_rate,
+        sample_missing_cutoff=sample_missing_rate
     )
     print(f"number of variants removed {len(rem_vars)} : {rem_vars}")
     print("")
@@ -412,9 +414,8 @@ def process_traits_gwas_polars(
     print(f"[SUCCESS] Pipeline completed. Results in {output_folder}")
     return {
         "zscore_file": zscore_file,
-        "ss_final": ss_final
+        "ss_final": sample_size_file
     }
-
 
 # ld_folder='/mnt/disks/sdd/resourses/postgwas/onekg_plinkfiles/GRCh37/LD_ref_EUR/'
 # main_gwas_id='daner_PGC_SCZ_w3_90_0418b_ukbbdedupe'

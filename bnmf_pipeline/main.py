@@ -17,13 +17,12 @@ def run_full_pipeline(configs):
     
     main_id = configs['main_gwas_id']
 
-
-
     # 3. Step 1: Main GWAS Summary Stat Processing
     print(f"--- [PYTHON] Starting Main GWAS Processing ---")
-    # Logic from your 2_process_main_sumstat.py
     from .process_main_sumstat import process_main_gwas
-    main_gwas_loci=process_main_gwas(
+    
+    # This returns a dictionary: {"main_sumstat_tsv": "/path/to/file.tsv"}
+    step1_output = process_main_gwas(
         main_gwas_vcf_path=configs['main_gwas_vcf_path'],
         outdir=final_output_path,
         main_gwas_id=main_id,
@@ -36,31 +35,44 @@ def run_full_pipeline(configs):
         snp_to_include=configs['snp_to_include']
     )
 
+    # EXTRACT THE PATH STRING FROM THE DICTIONARY
+    # This prevents the Polars .read() error in Step 2
+    main_gwas_loci = step1_output["main_sumstat_tsv"]
 
     # 2. Step 1: Trait Preparation (Polars)
     print(f"--- [PYTHON] Starting Trait Processing in {final_output_path} ---")
-    # Logic from your 1_custome_nbmnf_clustering.py
-    from  .process_traits_sumstat  import process_traits_gwas_polars
-    trait_outpit=process_traits_gwas_polars(
+    from .process_traits_sumstat import process_traits_gwas_polars
+    
+    trait_outpit = process_traits_gwas_polars(
         main_gwas_id=main_id,
-        main_gwas_loci=main_gwas_loci,
+        main_gwas_loci=main_gwas_loci, # Now a proper string path
         ld_folder=configs['ld_folder'],
         trait_input_file=configs['trait_input_file'],
         dbsnp_folder=configs['dbsnp_folder'],
         output_folder=final_output_path,
         r2_threshold=configs['r2_threshold'],
         window=configs['window'],
-        bcftools_bin=configs['bcftools_bin']
+        bcftools_bin=configs['bcftools_bin'],
+        variant_missing_rate=configs['variant_missing_rate'],
+        sample_missing_rate=configs['sample_missing_rate']
     )
 
     # 4. Step 3: bNMF Clustering (R via rpy2)
     print(f"--- [R via rpy2] Initializing bNMF Clustering ---")
     
+    # FIX: Ensure we are capturing string paths. 
+    # Based on your process_traits_gwas_polars return statement, 
+    # we use 'zscore_file' and 'ss_final' keys.
     z_file = trait_outpit['zscore_file']
     n_file = trait_outpit['ss_final']
     
+    # Validation: Ensure these are strings before calling os.path.exists
+    if not isinstance(z_file, str) or not isinstance(n_file, str):
+        # This catch is for safety if the R-script return wasn't updated yet
+        raise TypeError(f"Expected file paths as strings, but got {type(z_file)} and {type(n_file)}")
+
     if not (os.path.exists(z_file) and os.path.exists(n_file)):
-        raise FileNotFoundError(f"Input CSVs missing in {final_output_path}. Ensure Steps 1 & 2 completed.")
+        raise FileNotFoundError(f"Input CSVs missing in {final_output_path}. Ensure Step 2 saved files correctly.")
 
     # Source the specific R pipeline script
     r_pipeline = str(INTERNAL_R_DIR / "bnmf_clustering_pipeline.r")

@@ -71,6 +71,10 @@ def main():
                              metavar="", help="R-squared threshold for variant correlation. (Default: %(default)s)")
     trait_group.add_argument("--window", type=int, default=1000000, 
                              metavar="", help="Window size (bp) for trait extraction. (Default: %(default)s)")
+    trait_group.add_argument("--variant_missing_rate", type=int, default=0.1, 
+                             metavar="", help="variant_missing_rate. (Default: %(default)s)")
+    trait_group.add_argument("--sample_missing_rate", type=int, default=0.1, 
+                             metavar="", help="sample_missing_rate. (Default: %(default)s)")
 
     # --- Step 3: bNMF Parameters ---
     bnmf_group = parser.add_argument_group("Step 3: bNMF Parameters")
