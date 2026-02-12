@@ -17,28 +17,14 @@ def run_full_pipeline(configs):
     
     main_id = configs['main_gwas_id']
 
-    # 2. Step 1: Trait Preparation (Polars)
-    print(f"--- [PYTHON] Starting Trait Processing in {final_output_path} ---")
-    # Logic from your 1_custome_nbmnf_clustering.py
-    from .custome_nbmnf_clustering import process_traits_gwas_polars
-    process_traits_gwas_polars(
-        main_gwas_id=main_id,
-        main_gwas_loci=configs['main_gwas_loci'],
-        ld_folder=configs['ld_folder'],
-        trait_input_file=configs['trait_input_file'],
-        dbsnp_folder=configs['dbsnp_folder'],
-        output_folder=final_output_path,
-        r2_threshold=configs['r2_threshold'],
-        window=configs['window'],
-        bcftools_bin=configs['bcftools_bin']
-    )
 
-    # 3. Step 2: Main GWAS Summary Stat Processing
+
+    # 3. Step 1: Main GWAS Summary Stat Processing
     print(f"--- [PYTHON] Starting Main GWAS Processing ---")
     # Logic from your 2_process_main_sumstat.py
     from .process_main_sumstat import process_main_gwas
-    process_main_gwas(
-        main_gwas_vcf_path=configs['vcf_path'],
+    main_gwas_loci=process_main_gwas(
+        main_gwas_vcf_path=configs['main_gwas_vcf_path'],
         outdir=final_output_path,
         main_gwas_id=main_id,
         ld_folder=configs['ld_folder'],
@@ -50,12 +36,29 @@ def run_full_pipeline(configs):
         snp_to_include=configs['snp_to_include']
     )
 
+
+    # 2. Step 1: Trait Preparation (Polars)
+    print(f"--- [PYTHON] Starting Trait Processing in {final_output_path} ---")
+    # Logic from your 1_custome_nbmnf_clustering.py
+    from .custome_nbmnf_clustering import process_traits_gwas_polars
+    trait_outpit=process_traits_gwas_polars(
+        main_gwas_id=main_id,
+        main_gwas_loci=main_gwas_loci,
+        ld_folder=configs['ld_folder'],
+        trait_input_file=configs['trait_input_file'],
+        dbsnp_folder=configs['dbsnp_folder'],
+        output_folder=final_output_path,
+        r2_threshold=configs['r2_threshold'],
+        window=configs['window'],
+        bcftools_bin=configs['bcftools_bin']
+    )
+
     # 4. Step 3: bNMF Clustering (R via rpy2)
     print(f"--- [R via rpy2] Initializing bNMF Clustering ---")
     
-    z_file = os.path.join(final_output_path, f"{main_id}_zscore_index.csv")
-    n_file = os.path.join(final_output_path, f"{main_id}_sample_size_index.csv")
-
+    z_file = trait_outpit['zscore_file']
+    n_file = trait_outpit['ss_final']
+    
     if not (os.path.exists(z_file) and os.path.exists(n_file)):
         raise FileNotFoundError(f"Input CSVs missing in {final_output_path}. Ensure Steps 1 & 2 completed.")
 

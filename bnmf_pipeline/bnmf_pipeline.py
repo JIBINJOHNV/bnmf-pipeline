@@ -6,6 +6,8 @@ import rpy2.robjects as robjects
 
 # Assuming these are in your module:
 # from your_module import process_traits_gwas_polars, process_main_gwas
+from bnmf_pipeline.process_traits_sumstat import process_traits_gwas_polars
+from bnmf_pipeline.process_main_sumstat import process_main_gwas
 
 def main():
     parser = argparse.ArgumentParser(

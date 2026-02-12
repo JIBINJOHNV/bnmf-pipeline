@@ -1,11 +1,11 @@
 README.md
 pyproject.toml
-bnmf_pipeline/1_custome_nbmnf_clustering.py
-bnmf_pipeline/2_process_main_sumstat.py
 bnmf_pipeline/__init__.py
 bnmf_pipeline/bnmf_pipeline.py
 bnmf_pipeline/cli.py
 bnmf_pipeline/main.py
+bnmf_pipeline/process_main_sumstat.py
+bnmf_pipeline/process_traits_sumstat.py
 bnmf_pipeline/utilities.py
 bnmf_pipeline.egg-info/PKG-INFO
 bnmf_pipeline.egg-info/SOURCES.txt

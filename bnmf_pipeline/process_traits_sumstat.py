@@ -387,8 +387,10 @@ def process_traits_gwas_polars(
     rsid_map_pl = pl.DataFrame(rsid_map_df.to_dict(as_series=False)).rename({"uniq_id": "VAR_ID", "rsid": "rsID"})
     rsid_map_pl.write_csv(f"{output_folder}/rsID_map.txt", separator=" ")
     # Save Indices
-    z_final.write_csv(f"{output_folder}/{main_gwas_id}_zscore_index.csv")
-    ss_final.write_csv(f"{output_folder}/{main_gwas_id}_sample_size_index.csv")
+    zscore_file=f"{output_folder}/{main_gwas_id}_zscore_index.csv"
+    sample_size_file=f"{output_folder}/{main_gwas_id}_sample_size_index.csv"
+    z_final.write_csv(zscore_file)
+    ss_final.write_csv(sample_size_file)
     # Alignment File (Risk Allele metadata)
     alignment_df = (
         z_final.select(["uniq_id", "chr_pos"])
@@ -405,10 +407,13 @@ def process_traits_gwas_polars(
         .rename({"chr_pos": "SNP", "P_value": "P_VALUE", "Beta": "BETA"})
         .drop("uniq_id")
     )
-    alignment_df.write_csv(f"{output_folder}/alignment_GWAS_summStats.csv")
+    output_filename=f"{output_folder}/alignment_GWAS_summStats.csv"
+    alignment_df.write_csv(output_filename)
     print(f"[SUCCESS] Pipeline completed. Results in {output_folder}")
-    return True
-
+    return {
+        "zscore_file": zscore_file,
+        "ss_final": ss_final
+    }
 
 
 # ld_folder='/mnt/disks/sdd/resourses/postgwas/onekg_plinkfiles/GRCh37/LD_ref_EUR/'

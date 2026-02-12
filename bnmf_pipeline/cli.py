@@ -28,8 +28,7 @@ def main():
 
     # --- Global Configuration ---
     global_group = parser.add_argument_group("Global Configuration")
-    global_group.add_argument("--main_gwas_id", default="daner_PGC_SCZ_w3_90_0418b_ukbbdedupe", metavar="",
-                             help="Unique identifier for the primary GWAS study. (Default: %(default)s)")
+
     global_group.add_argument("--ld_folder", default="/mnt/disks/sdd/resourses/postgwas/onekg_plinkfiles/GRCh37/LD_ref_EUR/", metavar="",
                              help="Path to 1000G LD reference panels. (Default: %(default)s)")
     global_group.add_argument("--bcftools_bin", default="/usr/bin/bcftools", metavar="",
@@ -39,25 +38,11 @@ def main():
     global_group.add_argument("--output_folder", default=None, metavar="",
                              help="Output directory. (Default: Current Working Directory)")
 
-    # --- Step 1: Trait Processing ---
-    trait_group = parser.add_argument_group("Step 1: Trait Processing")
-    trait_group.add_argument("--main_gwas_loci", 
-                             default="/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe_independent_markers.tsv",
-                             metavar="", help="Independent markers for main GWAS. (Default: %(default)s)")
-    trait_group.add_argument("--trait_input_file", 
-                             default="/mnt/disks/sdd/bnmf-clustering/filtered_vcf_files/trait_gwas.csv",
-                             metavar="", help="CSV with paths to trait GWAS files. (Default: %(default)s)")
-    trait_group.add_argument("--dbsnp_folder", 
-                             default="/mnt/disks/sdd/resourses/postgwas/gwas2vcf/GRCh37/dbSNP/vcf_files/",
-                             metavar="", help="Path to dbSNP VCF files. (Default: %(default)s)")
-    trait_group.add_argument("--r2_threshold", type=float, default=0.8, 
-                             metavar="", help="R-squared threshold for variant correlation. (Default: %(default)s)")
-    trait_group.add_argument("--window", type=int, default=1000000, 
-                             metavar="", help="Window size (bp) for trait extraction. (Default: %(default)s)")
-
     # --- Step 2: GWAS Summary Stat Processing ---
     gwas_group = parser.add_argument_group("Step 2: GWAS Summary Stat Processing")
-    gwas_group.add_argument("--vcf_path", 
+    gwas_group.add_argument("--main_gwas_id", default="daner_PGC_SCZ_w3_90_0418b_ukbbdedupe", metavar="",
+                             help="Unique identifier for the primary GWAS study. (Default: %(default)s)")
+    gwas_group.add_argument("--main_gwas_vcf_path", 
                              default="/mnt/disks/sdd/bnmf-clustering/filtered_vcf_files/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe_GRCh37_filtered.vcf.gz",
                              metavar="", help="Path to filtered main GWAS VCF. (Default: %(default)s)")
     gwas_group.add_argument("--snp_to_include", 
@@ -69,6 +54,23 @@ def main():
                              metavar="", help="P-value threshold for lead SNPs. (Default: %(default)s)")
     gwas_group.add_argument("--r2_clump", type=float, default=0.05, 
                              metavar="", help="R-squared threshold for clumping. (Default: %(default)s)")
+
+
+    # --- Step 1: Trait Processing ---
+    trait_group = parser.add_argument_group("Step 1: Trait Processing")
+    # trait_group.add_argument("--main_gwas_loci", 
+    #                          default="/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe_independent_markers.tsv",
+    #                          metavar="", help="Independent markers for main GWAS. (Default: %(default)s)")
+    trait_group.add_argument("--trait_input_file", 
+                             default="/mnt/disks/sdd/bnmf-clustering/filtered_vcf_files/trait_gwas.csv",
+                             metavar="", help="CSV with paths to trait GWAS files. (Default: %(default)s)")
+    trait_group.add_argument("--dbsnp_folder", 
+                             default="/mnt/disks/sdd/resourses/postgwas/gwas2vcf/GRCh37/dbSNP/vcf_files/",
+                             metavar="", help="Path to dbSNP VCF files. (Default: %(default)s)")
+    trait_group.add_argument("--r2_threshold", type=float, default=0.8, 
+                             metavar="", help="R-squared threshold for variant correlation. (Default: %(default)s)")
+    trait_group.add_argument("--window", type=int, default=1000000, 
+                             metavar="", help="Window size (bp) for trait extraction. (Default: %(default)s)")
 
     # --- Step 3: bNMF Parameters ---
     bnmf_group = parser.add_argument_group("Step 3: bNMF Parameters")
