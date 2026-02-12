@@ -1,0 +1,97 @@
+# BNMF Genomic Clustering Pipeline
+
+A production-grade Python/R hybrid pipeline for processing GWAS summary statistics and performing Bayesian Non-negative Matrix Factorization (bNMF) clustering.
+
+Implements the partitioning methodology described in:  
+https://github.com/gwas-partitioning/bnmf-clustering
+
+---
+
+# 🧬 Overview
+
+This pipeline automates the transition from raw GWAS summary statistics to biologically interpretable clusters using a three-stage workflow:
+
+1. Lead variant extraction  
+2. Cross-trait matrix construction  
+3. Bayesian NMF clustering with stability analysis  
+
+Designed for reproducibility, scalability (HPC/GCP compatible), and publication-ready outputs.
+
+---
+
+# 🏗 Workflow
+
+## Step 1 — Main GWAS Processing (Python / Polars)
+
+- Extracts independent lead variants
+- Performs LD clumping
+- Removes extended MHC region
+- Applies QC filters
+- Produces non-redundant SNP list
+
+## Step 2 — Trait Matrix Construction (Python / VCF)
+
+- Queries secondary trait GWAS files (VCF/CSV)
+- Extracts aligned effect sizes
+- Computes Z-score matrix
+- Constructs effective sample size matrix (N)
+- Produces matrix ready for factorization
+
+## Step 3 — Bayesian NMF Clustering (R via rpy2)
+
+- Runs bNMF with shrinkage
+- Executes multiple repetitions (default: 100)
+- Estimates effective dimensionality (K)
+- Performs stability analysis
+- Generates HTML report
+
+---
+
+# 📊 Best K Selection Strategy
+
+Cluster number is determined using:
+
+1. **Mode of final_active** (most frequent effective K)
+2. **Mean model evidence**
+3. **Reconstruction error**
+4. **Stability across runs**
+5. **Factor reproducibility**
+
+### Decision Logic
+
+- If K appears in >50% of runs → primary model
+- If secondary K appears in >30% → reported as alternative
+- Evidence difference >100 → strong support
+- Evidence difference >300 → overwhelming support
+
+The pipeline automatically stores:
+
+- Run-level metrics
+- K-level summary
+- Factor strength tables
+- Cluster loading matrices
+
+---
+
+# 📦 Outputs
+
+The pipeline produces:
+
+- Lead SNP summary table
+- Z-score matrix
+- Effective N matrix
+- Run-level clustering metrics
+- K summary table
+- Factor norm table
+- Trait loading table
+- Automated HTML clustering report
+
+---
+
+# 🚀 Installation
+
+## Option 1 — Conda Environment (Recommended)
+
+```bash
+conda env create -f bnmf_pkg/conda_env.yaml
+conda activate bnmf_pkg_env
