@@ -89,7 +89,7 @@ def main():
     args = parser.parse_args()
 
     # Validation: Ensure at least one step is requested
-    if not any([args.run_traits, args.run_main, args.run_bnmf]):
+    if not any([args.main_gwas_id, args.trait_input_file, args.main_gwas_vcf_path]):
         from rich.console import Console
         console = Console()
         console.print("\n[bold red][!] ERROR:[/bold red] You must specify at least one action flag: --run_traits, --run_main, or --run_bnmf.\n")
