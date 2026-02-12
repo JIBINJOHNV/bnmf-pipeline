@@ -99,34 +99,35 @@ run_genomic_bnmf_pipeline <- function(
     dplyr::mutate(K = as.numeric(as.character(K)))
   
   top3_ks <- k_summary %>% 
-    dplyr::arrange(dplyr::desc(n_runs)) %>% 
-    dplyr::slice_head(n = 3) %>% 
-    dplyr::pull(K)
+    dplyr::filter(K != 1) %>%                  
+    dplyr::arrange(dplyr::desc(n_runs)) %>%  
+    dplyr::slice_head(n = 3) %>%             
+    dplyr::pull(K)                        
 
-  # 9. Report Generation
-  rmd_path <- file.path(script_dir, "format_bNMF_results.Rmd") 
-  out_dir <- file.path(project_dir, "reports")
-  if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
-
-  for (k in top3_ks) {
-    message(sprintf("Rendering Report for K=%i", k))
-    tryCatch({
-      rmarkdown::render(
-        input       = rmd_path,
-        output_file = sprintf("results_for_K_%i.html", k),
-        output_dir  = out_dir,
-        params      = list(main_dir = project_dir, k = k, loci_file = "query", GTEx = FALSE, my_traits = data.frame()),
-        quiet       = TRUE
-      )
-    }, error = function(e) message(sprintf("Failed to render K=%i: %s", k, e$message)))
-  }
-
-  # 10. Final Export
+  # 9. Final Export
   save.image(file = file.path(project_dir, "pipeline_complete.RData"))
   message("--- Pipeline Finished ---")
   print(Sys.time() - start_time)
-  
-  return(list(summary = k_summary, best_ks = top3_ks))
+
+  # 10. Report Generation
+  for (k in top3_ks) {
+    rmd_path <- file.path(script_dir, "format_bNMF_results.Rmd") 
+    out_dir <- file.path(project_dir, "reports", paste0("K_", k))
+    if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+
+      message(sprintf("Rendering Report for K=%i", k))
+      tryCatch({
+        rmarkdown::render(
+          input       = rmd_path,
+          output_file = sprintf("results_for_K_%i.html", k),
+          output_dir  = out_dir,
+          params      = list(main_dir = project_dir, k = k, loci_file = "query", GTEx = FALSE, my_traits = data.frame()),
+          quiet       = TRUE
+        )
+      }, error = function(e) message(sprintf("Failed to render K=%i: %s", k, e$message)))
+    }
+
+    return(list(summary = k_summary, best_ks = top3_ks))
 }
 
 

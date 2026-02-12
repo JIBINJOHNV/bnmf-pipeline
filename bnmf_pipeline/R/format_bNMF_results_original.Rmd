@@ -90,7 +90,7 @@ main_dir <- params$main_dir
 k <- params$k
 loci_file <- params$loci_file
 eval_GTEx <- params$GTEx 
-gwas_traits <- params$my_traits
+#gwas_traits <- params$my_traits
 
 # find majority K from run summary
 df_run_summary <- fread(file.path(main_dir,"run_summary.txt"),

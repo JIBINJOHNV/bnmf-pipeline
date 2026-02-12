@@ -5,11 +5,12 @@ pacman::p_load(tidyverse, data.table, readxl, magrittr, dplyr, strex,
 
 
 ## need to load two R files dynamically 
-source("/Users/JJOHN41/Downloads/bnmf-clustering/scripts/run_bNMF_2025.R")
-source("/Users/JJOHN41/Downloads/bnmf-clustering/scripts/utilities.R")
-
+source("/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/run_bNMF_2025.r")
+source("/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/utilities.R")
+source("/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/utilities.R")
+rmd_path='/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/format_bNMF_results.Rmd'
 # USER INPUTS!!!
-project_dir = '/mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/daner_PGC_SCZ_w3_90_0418b_ukbbdedupe/' # path to where you want results saved
+project_dir = '/mnt/disks/sdd/bnmf-clustering/Neuroimage/SCZ/Neuroimage_main_cluster/test_run/' # path to where you want results saved
 user_token = '901021003036' # token for LDlinkR api
 PVCUTOFF = 5e-8
 setwd(project_dir)
@@ -91,9 +92,6 @@ final_active <- sapply(bnmf_reps, function(x) {
   as.numeric(tail(unlist(x$n.active), 1))
   })
 
-top3_k_vector <- k_summary %>% arrange(desc(n_runs)) %>%
-  slice_head(n = 3) %>% pull(final_active)
-
 
 
 
@@ -107,6 +105,21 @@ print("Total pipeline runtime:")
 print(end-start)
 
 #----
+
+
+
+  # Calculate stability summary
+  final_active <- sapply(bnmf_reps, function(x) as.numeric(tail(unlist(x$n.active), 1)))
+  k_summary <- as.data.frame(table(final_active)) %>%
+    dplyr::rename(K = final_active, n_runs = Freq) %>%
+    dplyr::mutate(K = as.numeric(as.character(K)))
+  
+  top3_k_vector <- k_summary %>% 
+    dplyr::arrange(dplyr::desc(n_runs)) %>% 
+    dplyr::slice_head(n = 3) %>% 
+    dplyr::pull(K)
+
+
 
 # format results
 

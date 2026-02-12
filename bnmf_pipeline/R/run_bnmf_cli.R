@@ -20,24 +20,18 @@ option_list <- list(
               help="Correlation cutoff for redundant traits [default %default]", metavar="num"),
   make_option(c("-p", "--script_path"), type="character", default=NULL, 
               help="Path to the core bNMF R source scripts", metavar="path"),
-  make_option( c("-k", "--maximum_k"), type = "integer", default = 30,
-            help = paste(
-              "Maximum number of latent factors (K) allowed in the Bayesian NMF model.",
-              "This serves as an upper bound; the model will automatically prune",
-              "unused components via shrinkage (ARD).",
-              "Default: %default."
-            )
-          )
+  make_option(c("-k", "--maximum_k"), type = "integer", default = 30,
+              help = "Maximum number of latent factors (K) allowed. Default: %default.")
 )
 
 opt_parser <- OptionParser(
-  option_list=option_list,
+  option_list = option_list,
   description = "\nBNMF Genomic Clustering Step 3: R Core Pipeline"
 )
 
 opt <- parse_args(opt_parser)
 
-# --- Improved Validation Logic ---
+# --- Validation Logic ---
 required_args <- c("project_dir", "z_score_file", "sample_size_file", "script_path")
 missing_args <- required_args[sapply(required_args, function(x) is.null(opt[[x]]))]
 
@@ -49,27 +43,30 @@ if (length(missing_args) > 0) {
 }
 
 # --- Execute ---
-# Construct the path to the actual function script
-core_script <- file.path(opt$script_path, "run_bNMF_2025.r")
+core_script <- file.path(opt$script_path, "bnmf_clustering_pipeline.r")
 
 if (!file.exists(core_script)) {
   stop(paste("Could not find core script at:", core_script), call. = FALSE)
 }
 
+# Source the function definition
 source(core_script)
 
 message(paste(">>> Starting bNMF pipeline for:", opt$main_gwas_id))
 
-run_genomic_bnmf_pipeline(
-    project_dir      = opt$project_dir, 
-    z_score_file     = opt$z_score_file, 
-    sample_size_file = opt$sample_size_file, 
-    main_gwas_id     = opt$main_gwas_id,
-    n_reps           = opt$n_reps, 
-    tolerance        = opt$tolerance,
-    corr_cutoff      = opt$corr_cutoff,
-    script_path      = opt$script_path,
-    maximum_k        = opt$maximum_k,
-)
+# --- ARGUMENT FILTERING (The Fix) ---
+# 1. Get names of arguments that the function actually expects
+valid_args <- names(formals(run_genomic_bnmf_pipeline))
 
-message(">>> bNMF pipeline completed successfully.")
+# 2. Filter 'opt' to remove 'help' and other CLI-only artifacts
+# This ensures only recognized parameters are passed
+pipeline_params <- opt[names(opt) %in% valid_args]
+
+# 3. Call the function safely
+tryCatch({
+    do.call(run_genomic_bnmf_pipeline, pipeline_params)
+    message(">>> bNMF pipeline completed successfully.")
+}, error = function(e) {
+    message(paste("\n[!] Pipeline Error:", e$message))
+    quit(status = 1)
+})
