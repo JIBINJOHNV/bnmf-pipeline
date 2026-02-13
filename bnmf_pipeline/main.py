@@ -2,6 +2,7 @@ import os
 import sys
 from pathlib import Path
 import rpy2.robjects as robjects
+import subprocess
 
 # Relative path to your R scripts inside the package
 INTERNAL_R_DIR = Path(__file__).parent / "R"
@@ -74,20 +75,50 @@ def run_full_pipeline(configs):
     if not (os.path.exists(z_file) and os.path.exists(n_file)):
         raise FileNotFoundError(f"Input CSVs missing in {final_output_path}. Ensure Step 2 saved files correctly.")
 
-    # Source the specific R pipeline script
-    r_pipeline = str(INTERNAL_R_DIR / "bnmf_clustering_pipeline.r")
-    robjects.r.source(r_pipeline)
-    bnmf_func = robjects.globalenv['run_genomic_bnmf_pipeline']
-    
-    bnmf_func(
-        project_dir      = final_output_path,
-        z_score_file     = z_file,
-        sample_size_file = n_file,
-        main_gwas_id     = main_id,
-        n_reps           = configs['n_reps'],
-        tolerance        = configs['tolerance'],
-        corr_cutoff      = configs['corr_cutoff'],
-        maximum_k        = configs['maximum_k'],
-        script_path      = str(INTERNAL_R_DIR)
-    )
+
+    print(f"--- [Rscript] Launching bNMF Clustering CLI ---")
+
+    r_cli_script = str(INTERNAL_R_DIR / "run_bnmf_cli.R")
+
+    cmd = [
+        "Rscript",
+        r_cli_script,
+        "--project_dir", final_output_path,
+        "--z_score_file", z_file,
+        "--sample_size_file", n_file,
+        "--main_gwas_id", main_id,
+        "--n_reps", str(configs["n_reps"]),
+        "--tolerance", str(configs["tolerance"]),
+        "--corr_cutoff", str(configs["corr_cutoff"]),
+        "--maximum_k", str(configs["maximum_k"]),
+        "--script_path", str(INTERNAL_R_DIR)
+    ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print(result.stderr)
+        raise RuntimeError("bNMF R pipeline failed")
+
+    print(result.stdout)
     print(f"Success! Results saved in: {final_output_path}")
+
+
+    # Source the specific R pipeline script
+    # r_pipeline = str(INTERNAL_R_DIR / "bnmf_clustering_pipeline.r")
+    # robjects.r.source(r_pipeline)
+    # bnmf_func = robjects.globalenv['run_genomic_bnmf_pipeline']
+    
+    # bnmf_func(
+    #     project_dir      = final_output_path,
+    #     z_score_file     = z_file,
+    #     sample_size_file = n_file,
+    #     main_gwas_id     = main_id,
+    #     n_reps           = configs['n_reps'],
+    #     tolerance        = configs['tolerance'],
+    #     corr_cutoff      = configs['corr_cutoff'],
+    #     maximum_k        = configs['maximum_k'],
+    #     script_path      = str(INTERNAL_R_DIR)
+    # )
+    # print(f"Success! Results saved in: {final_output_path}")
+    

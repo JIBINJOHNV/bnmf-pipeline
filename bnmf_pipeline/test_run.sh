@@ -17,4 +17,21 @@ bnmf-pipeline \
     --r2_clump 0.05 \
     --n_reps 100 \
     --tolerance 1e-06 \
-    --corr_cutoff 0.8
+    --corr_cutoff 0.8 \
+    --maximum_k 30 
+
+
+
+
+project_dir="/mnt/disks/sdd/bnmf-clustering/Cognitive_Phenotypes/BIPI/test_run/"
+main_gwas_id="pgc_bip2021_BDI"
+Rscript /mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/run_bnmf_cli.R \
+    --project_dir ${project_dir} \
+    --z_score_file ${project_dir}/pgc_bip2021_BDI_zscore_index.csv \
+    --sample_size_file ${project_dir}/pgc_bip2021_BDI_sample_size_index.csv \
+    --main_gwas_id ${main_gwas_id} \
+    --n_reps 10 \
+    --tolerance 1e-06 \
+    --corr_cutoff 0.8 \
+    --script_path /mnt/disks/sdd/bnmf-clustering/bnmf_cluster_analysis/bnmf-pipeline/bnmf_pipeline/R/ \
+    --maximum_k 2
