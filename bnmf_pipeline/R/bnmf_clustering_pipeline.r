@@ -109,23 +109,34 @@ run_genomic_bnmf_pipeline <- function(
   message("--- Pipeline Finished ---")
   print(Sys.time() - start_time)
 
-  # 10. Report Generation
-  for (k in top3_ks) {
-    rmd_path <- file.path(script_dir, "format_bNMF_results.Rmd") 
-    out_dir <- file.path(project_dir, "reports", paste0("K_", k))
-    if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+  rm(k)  # optional, only if k existed earlier
 
-      message(sprintf("Rendering Report for K=%i", k))
-      tryCatch({
-        rmarkdown::render(
-          input       = rmd_path,
-          output_file = sprintf("results_for_K_%i.html", k),
-          output_dir  = out_dir,
-          params      = list(main_dir = project_dir, k = k, loci_file = "query", GTEx = FALSE, my_traits = data.frame()),
-          quiet       = TRUE
-        )
-      }, error = function(e) message(sprintf("Failed to render K=%i: %s", k, e$message)))
-    }
+   for (k_val in top3_ks) {
+        rmd_path <- file.path(script_dir, "format_bNMF_results.Rmd") 
+        out_dir  <- file.path(project_dir, "reports", paste0("K_", k_val))
+        if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+        message(sprintf("Rendering Report for K=%i", k_val))
+
+        tryCatch({
+          rmarkdown::render(
+            input       = rmd_path,
+            output_file = sprintf("results_for_K_%i.html", k_val),
+            output_dir  = out_dir,
+            params      = list(
+              main_dir = project_dir,
+              k        = k_val,
+              loci_file = "query",
+              GTEx      = FALSE,
+              my_traits = data.frame()
+            ),
+            quiet = TRUE,
+            envir = new.env(parent = emptyenv())
+          )
+        }, error = function(e) {
+            message(sprintf("Failed to render K=%i: %s", k_val, e$message))
+       })
+
+  }
 
     return(list(summary = k_summary, best_ks = top3_ks))
 }

@@ -37,7 +37,6 @@ dependencies:
   - psutil
   - rich-argparse
   - rpy2
-  - r-genomicsem
   - bioconductor-genomicranges
   - bioconductor-iranges
   - bioconductor-rtracklayer
@@ -45,4 +44,4 @@ dependencies:
   - bioconductor-homo.sapiens
   - pip
   - pip:
-    - -e .
+    - git+https://github.com/JIBINJOHNV/bnmf-pipeline.git
